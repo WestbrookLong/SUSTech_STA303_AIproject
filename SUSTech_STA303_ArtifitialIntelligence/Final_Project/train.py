@@ -1,7 +1,7 @@
 """
 CartPole Training & Evaluation (PyTorch + Gymnasium)
 ---------------------------------------------------
-- Supports multiple agents (DQN, PPO, ...)
+- Supports multiple agents (DQN, Double DQN, PPO, A2C, ...)
 - Logs scores via ScoreLogger (PNG + CSV)
 - Saves models under ./models/<algo>.torch
 
@@ -21,7 +21,9 @@ import gymnasium as gym
 import numpy as np
 
 from agents.cartpole_dqn import DQNSolver, DQNConfig
+from agents.cartpole_double_dqn import DoubleDQNSolver, DoubleDQNConfig
 from agents.cartpole_ppo import PPOSolver, PPOConfig
+from agents.cartpole_a2c import A2CSolver, A2CConfig
 from scores.score_logger import ScoreLogger
 
 ENV_NAME = "CartPole-v1"
@@ -39,7 +41,9 @@ class AgentEntry:
 
 AGENT_REGISTRY: Dict[str, AgentEntry] = {
     "dqn": AgentEntry(DQNSolver, DQNConfig, "cartpole_dqn.torch"),
+    "ddqn": AgentEntry(DoubleDQNSolver, DoubleDQNConfig, "cartpole_double_dqn.torch"),
     "ppo": AgentEntry(PPOSolver, PPOConfig, "cartpole_ppo.torch"),
+    "a2c": AgentEntry(A2CSolver, A2CConfig, "cartpole_a2c.torch"),
 }
 
 
@@ -55,7 +59,10 @@ def _default_model_path(algorithm: str) -> str:
     return os.path.join(MODEL_DIR, entry.model_name)
 
 
-def train(num_episodes: int = 200, terminal_penalty: bool = True, algorithm: str = "dqn"):
+def train(num_episodes: int = 200,
+          terminal_penalty: bool = True,
+          algorithm: str = "dqn",
+          load_path: str | None = None):
     """
     Main training loop (algorithm-agnostic):
       - Creates the environment and agent (DQN/PPO/etc)
@@ -76,6 +83,9 @@ def train(num_episodes: int = 200, terminal_penalty: bool = True, algorithm: str
     agent = entry.solver_cls(obs_dim, act_dim, cfg=entry.cfg_cls())
     device = getattr(agent, "device", "cpu")
     print(f"[Info] Training {algorithm.upper()} on device: {device}")
+    if load_path:
+        agent.load(load_path)
+        print(f"[Info] Loaded weights from {load_path}")
 
     for run in range(1, num_episodes + 1):
         state, info = env.reset(seed=run)
@@ -119,7 +129,7 @@ def evaluate(model_path: str | None = None,
              fps: int = 60):
     """
     Evaluate a trained agent using deterministic actions.
-    Args mirror train.py but now algorithm can be 'dqn' or 'ppo'.
+    Args mirror train.py but now algorithm can be 'dqn', 'ppo', or 'a2c'.
     """
     entry = _get_entry(algorithm)
     os.makedirs(MODEL_DIR, exist_ok=True)
@@ -171,10 +181,11 @@ def evaluate(model_path: str | None = None,
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Train/Evaluate CartPole agents (DQN, PPO, ...)")
+    parser = argparse.ArgumentParser(description="Train/Evaluate CartPole agents (DQN, Double DQN, PPO, A2C, ...)")
     parser.add_argument("-a", "--algorithm", default="dqn", help=f"Agent type. Options: {list(AGENT_REGISTRY.keys())}")
     parser.add_argument("-n", "--train-episodes", type=int, default=500, help="Number of training episodes.")
     parser.add_argument("--no-terminal-penalty", action="store_true", help="Disable -1 reward at episode end.")
+    parser.add_argument("--load-model", default=None, help="Optional path to weights to load before training.")
     parser.add_argument("--skip-eval", action="store_true", help="Skip evaluation after training.")
     parser.add_argument("--eval-episodes", type=int, default=100, help="Number of evaluation episodes.")
     parser.add_argument("--eval-render", action="store_true", help="Render the environment during evaluation.")
@@ -185,6 +196,7 @@ if __name__ == "__main__":
         num_episodes=args.train_episodes,
         terminal_penalty=not args.no_terminal_penalty,
         algorithm=args.algorithm,
+        load_path=args.load_model,
     )
     if not args.skip_eval:
         evaluate(

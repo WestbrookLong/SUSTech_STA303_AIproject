@@ -1,74 +1,68 @@
-# 在 `train.py` 中切换 DQN / PPO 指南
+# 在 `train.py` 中切换 DQN / PPO / A2C
 
-为方便直接使用 `train.py` 同时训练/评估 DQN 和 PPO，本仓库新增了统一的 agent 注册逻辑与命令行参数。本文说明需要变更的参数以及示例用法。
+为方便直接使用 `train.py` 训练或评估不同算法，仓库提供了统一的 agent 注册表与命令行参数。下文描述如何切换到任意已注册的算法（目前支持 DQN、Double DQN、PPO、A2C）。
 
-## 1. 核心参数
+## 1. 核心函数参数
 
 - `train(num_episodes=..., terminal_penalty=True, algorithm="dqn")`
-  - `algorithm` 现支持 `"dqn"` 与 `"ppo"`，用于创建不同的 agent/模型路径。
-  - 其他参数保持不变：`num_episodes` 控制训练轮数，`terminal_penalty` 控制是否在失败回合加 -1。
+  - `algorithm` 可以是 `"dqn"`, `"ddqn"`, `"ppo"`, `"a2c"`，用来实例化对应 agent 并决定模型保存文件名。
+  - 其余参数保持不变：`num_episodes` 控制训练回合数，`terminal_penalty` 控制终止惩罚。
 - `evaluate(model_path=None, algorithm="dqn", episodes=..., render=..., fps=...)`
-  - `algorithm` 同样决定加载哪种 agent。
-  - 若 `model_path` 为空，则自动从 `./models/cartpole_<algo>.torch` 读取对应权重。
+  - `algorithm` 决定加载哪种 agent。
+  - 若 `model_path` 为空，会从 `./models/cartpole_<algo>.torch` 读取默认文件。
 
-## 2. 命令行使用
+## 2. 命令行用法
 
-`train.py` 现在自带简单的 CLI，常用参数如下：
+`train.py` 提供 CLI，可通过以下方式切换算法：
 
-```
+```bash
 python train.py \
-    --algorithm ppo \
+    --algorithm a2c \
     --train-episodes 800 \
+    --load-model models/cartpole_a2c.torch \
     --no-terminal-penalty \
     --eval-episodes 50 \
     --eval-render
 ```
 
-- `--algorithm {dqn,ppo}`：选择要训练/评估的智能体。
-- `--train-episodes`：训练总回合数。
-- `--no-terminal-penalty`：关闭 -1 终止惩罚（默认开启）。
-- `--skip-eval`：仅训练，不做评估。
-- `--eval-episodes` / `--eval-render` / `--eval-fps`：控制评估轮数、是否渲染、渲染帧率。
+- `--algorithm {dqn,ddqn,ppo,a2c}`：指定当前训练/评估的智能体。
+- `--load-model <path>`：在训练开始前加载已有权重，可用于热启动或继续训练。
+- 其余参数（`--train-episodes`, `--no-terminal-penalty`, `--skip-eval`, `--eval-*`）与原先一致。
 
-若只想训练 PPO 而不立刻评估，可执行：
+若只想训练（例如 PPO）而暂不评估：
 
-```
+```bash
 python train.py --algorithm ppo --train-episodes 600 --skip-eval
 ```
 
-训练完成后，再单独评估：
+训练结束后可单独评估（以下示例评估 A2C）：
 
-```
-python train.py --algorithm ppo --skip-eval --train-episodes 0
+```bash
+python train.py --algorithm a2c --skip-eval --train-episodes 0
 python - <<'PY'
 from train import evaluate
-evaluate(algorithm="ppo", episodes=50, render=False)
+evaluate(algorithm="a2c", episodes=50, render=False)
 PY
 ```
 
-或直接调用 `total_eval.py` 统一入口也可以。
+或直接改用 `total_eval.py` 统一入口。
 
 ## 3. 作为模块调用
-
-在其他脚本/Notebook 中，可直接传参调用：
 
 ```python
 from train import train, evaluate
 
-# 训练 PPO
-train(num_episodes=500, terminal_penalty=True, algorithm="ppo")
+# 训练 Double DQN
+train(num_episodes=500, terminal_penalty=True, algorithm="ddqn")
 
-# 评估已保存的 PPO 模型
-evaluate(algorithm="ppo", episodes=20, render=False)
+# 评估已保存的 A2C 模型
+evaluate(algorithm="a2c", episodes=20, render=False)
 ```
 
-保持 `algorithm` 参数一致即可复用 `./models` 下按算法命名的 `.torch` 文件。
+确保 `algorithm` 参数一致，即可复用 `./models` 下对应的 `.torch` 权重。
 
-## 4. 新增逻辑概览
+## 4. 注册表概览
 
-- `AGENT_REGISTRY`：维护 `{ "dqn": AgentEntry(...), "ppo": AgentEntry(...) }`，集中管理 Solver、配置、模型文件名。
-- `_default_model_path(algorithm)`：根据算法生成 `models/cartpole_<algo>.torch`。
-- 所有训练/评估逻辑通过查表自动选择对应 Agent，因此将来新增算法时，只需在注册表里再添加一项即可。
-
-如需在 README 或其他地方展示新的运行方式，可参考此文档的示例命令。若想添加更多算法（如 A2C），先实现 `agents/cartpole_a2c.py`，再在 `AGENT_REGISTRY` 中注册即可继承同样的入口。 
-
+- `AGENT_REGISTRY`：维护 `{ "dqn": AgentEntry(...), "ddqn": AgentEntry(...), "ppo": AgentEntry(...), "a2c": AgentEntry(...) }`，集中存放 solver、配置类和默认文件名。
+- `_default_model_path(algorithm)`：根据算法自动生成 `models/cartpole_<algo>.torch`。
+- 训练/评估逻辑统一通过注册表查找，从而可以轻松扩展。若未来添加其他算法，只需在 `agents/` 新增实现并在注册表补充一条记录即可使用。

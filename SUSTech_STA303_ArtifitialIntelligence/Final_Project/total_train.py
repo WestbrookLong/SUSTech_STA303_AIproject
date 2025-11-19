@@ -1,5 +1,5 @@
 """
-Unified training entry for CartPole agents (DQN, PPO, ...).
+Unified training entry for CartPole agents (DQN, Double DQN, PPO, A2C, ...).
 ---------------------------------------------------------
 - Mirrors train.py/train_ppo.py loops but lets you switch algorithms via CLI/args.
 - Saves models under ./models/ with algorithm-specific filenames.
@@ -15,7 +15,9 @@ import gymnasium as gym
 import numpy as np
 
 from agents.cartpole_dqn import DQNSolver, DQNConfig
+from agents.cartpole_double_dqn import DoubleDQNSolver, DoubleDQNConfig
 from agents.cartpole_ppo import PPOSolver, PPOConfig
+from agents.cartpole_a2c import A2CSolver, A2CConfig
 from scores.score_logger import ScoreLogger
 
 ENV_NAME = "CartPole-v1"
@@ -33,7 +35,9 @@ class AgentEntry:
 
 AGENT_REGISTRY: Dict[str, AgentEntry] = {
     "dqn": AgentEntry(DQNSolver, DQNConfig, "cartpole_dqn.torch"),
+    "ddqn": AgentEntry(DoubleDQNSolver, DoubleDQNConfig, "cartpole_double_dqn.torch"),
     "ppo": AgentEntry(PPOSolver, PPOConfig, "cartpole_ppo.torch"),
+    "a2c": AgentEntry(A2CSolver, A2CConfig, "cartpole_a2c.torch"),
 }
 
 
@@ -109,4 +113,3 @@ if __name__ == "__main__":
         num_episodes=args.episodes,
         terminal_penalty=not args.no_terminal_penalty,
     )
-
