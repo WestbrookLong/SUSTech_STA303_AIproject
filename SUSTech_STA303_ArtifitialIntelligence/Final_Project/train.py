@@ -24,6 +24,7 @@ from agents.cartpole_dqn import DQNSolver, DQNConfig
 from agents.cartpole_double_dqn import DoubleDQNSolver, DoubleDQNConfig
 from agents.cartpole_ppo import PPOSolver, PPOConfig
 from agents.cartpole_a2c import A2CSolver, A2CConfig
+from agents.cartpole_sac import SACSolver, SACConfig
 from scores.score_logger import ScoreLogger
 
 ENV_NAME = "CartPole-v1"
@@ -44,6 +45,7 @@ AGENT_REGISTRY: Dict[str, AgentEntry] = {
     "ddqn": AgentEntry(DoubleDQNSolver, DoubleDQNConfig, "cartpole_double_dqn.torch"),
     "ppo": AgentEntry(PPOSolver, PPOConfig, "cartpole_ppo.torch"),
     "a2c": AgentEntry(A2CSolver, A2CConfig, "cartpole_a2c.torch"),
+    "sac": AgentEntry(SACSolver, SACConfig, "cartpole_sac.torch"),
 }
 
 
@@ -206,3 +208,5 @@ if __name__ == "__main__":
             render=args.eval_render,
             fps=args.eval_fps,
         )
+        # 评估：python train.py -a ddqn -n 0 --eval-render --load-model models/cartpole_double_dqn.torch_2
+        # 训练：python train.py --algorithm sac --train-episodes 1000 --skip-eval --load-model models/cartpole_double_dqn.torch_2

@@ -23,7 +23,7 @@ BATCH_SIZE = 32
 MEMORY_SIZE = 50_000
 INITIAL_EXPLORATION_STEPS = 1_000
 EPS_START = 1.0
-EPS_END = 0.05
+EPS_END = 0.03
 EPS_DECAY = 0.995
 TARGET_UPDATE_STEPS = 500
 
@@ -182,6 +182,8 @@ class DoubleDQNSolver:
                 "online": self.online.state_dict(),
                 "target": self.target.state_dict(),
                 "cfg": self.cfg.__dict__,
+                "exploration_rate": self.exploration_rate,
+                "steps": self.steps,
             },
             path,
         )
@@ -190,8 +192,10 @@ class DoubleDQNSolver:
         ckpt = torch.load(path, map_location=self.device)
         self.online.load_state_dict(ckpt["online"])
         self.target.load_state_dict(ckpt["target"])
+        # Restore epsilon / step counter if present to allow true resume training
+        self.exploration_rate = float(ckpt.get("exploration_rate", self.cfg.eps_start))
+        self.steps = int(ckpt.get("steps", 0))
 
     def _decay_eps(self):
         self.exploration_rate = max(self.cfg.eps_end, self.exploration_rate * self.cfg.eps_decay)
         self.steps += 1
-

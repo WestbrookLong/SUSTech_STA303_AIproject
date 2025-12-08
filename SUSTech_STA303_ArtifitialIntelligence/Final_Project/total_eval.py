@@ -19,6 +19,7 @@ from agents.cartpole_dqn import DQNSolver, DQNConfig
 from agents.cartpole_double_dqn import DoubleDQNSolver, DoubleDQNConfig
 from agents.cartpole_ppo import PPOSolver, PPOConfig
 from agents.cartpole_a2c import A2CSolver, A2CConfig
+from agents.cartpole_sac import SACSolver, SACConfig
 
 ENV_NAME = "CartPole-v1"
 MODEL_DIR = "models"
@@ -36,6 +37,7 @@ AGENT_REGISTRY: Dict[str, AgentEntry] = {
     "ddqn": AgentEntry(DoubleDQNSolver, DoubleDQNConfig, "cartpole_double_dqn.torch"),
     "ppo": AgentEntry(PPOSolver, PPOConfig, "cartpole_ppo.torch"),
     "a2c": AgentEntry(A2CSolver, A2CConfig, "cartpole_a2c.torch"),
+    "sac": AgentEntry(SACSolver, SACConfig, "cartpole_sac.torch"),
 }
 
 
