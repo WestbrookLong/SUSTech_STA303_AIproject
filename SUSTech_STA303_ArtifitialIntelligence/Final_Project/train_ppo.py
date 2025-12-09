@@ -32,12 +32,17 @@ def train(num_episodes: int = 500, terminal_penalty: bool = True) -> PPOSolver:
     os.makedirs(MODEL_DIR, exist_ok=True)
 
     env = gym.make(ENV_NAME)
-    logger = ScoreLogger(ENV_NAME, algorithm="ppo")
 
     obs_dim = env.observation_space.shape[0]
     act_dim = env.action_space.n
 
     agent = PPOSolver(obs_dim, act_dim, cfg=PPOConfig())
+    cfg = getattr(agent, "cfg", None)
+    if cfg is not None and hasattr(cfg, "__dict__"):
+        hparams_text = ", ".join(f"{k}={v}" for k, v in cfg.__dict__.items())
+    else:
+        hparams_text = None
+    logger = ScoreLogger(ENV_NAME, algorithm="ppo", hparams=hparams_text)
     print(f"[Info] PPO using device: {agent.device}")
 
     for run in range(1, num_episodes + 1):

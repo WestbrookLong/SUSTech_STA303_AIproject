@@ -25,9 +25,11 @@ CONSECUTIVE_RUNS_TO_SOLVE = 100
 class ScoreLogger:
     """Logs episode scores and generates plots."""
 
-    def __init__(self, env_name: str, algorithm: str | None = None):
+    def __init__(self, env_name: str, algorithm: str | None = None, hparams: str | None = None):
         self.env_name = env_name
         self.algorithm = algorithm or "default"
+        # Optional short text describing hyperparameters for this run (printed on plots)
+        self.hparams = hparams
         self.scores = deque(maxlen=CONSECUTIVE_RUNS_TO_SOLVE)
 
         os.makedirs(SCORES_DIR, exist_ok=True)
@@ -124,6 +126,9 @@ class ScoreLogger:
             plt.plot(x, y_trend, linestyle="-.", label="Trend (100-ep Reset Avg)")
 
         plt.title(f"{self.env_name} - Training Progress")
+        if self.hparams:
+            # Put hyperparameters as a small text line above the plot
+            plt.suptitle(self.hparams, fontsize=8, y=0.97)
         plt.xlabel(x_label)
         plt.ylabel(y_label)
         if show_legend:
