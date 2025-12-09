@@ -32,7 +32,7 @@ def train(num_episodes: int = 500, terminal_penalty: bool = True) -> PPOSolver:
     os.makedirs(MODEL_DIR, exist_ok=True)
 
     env = gym.make(ENV_NAME)
-    logger = ScoreLogger(ENV_NAME)
+    logger = ScoreLogger(ENV_NAME, algorithm="ppo")
 
     obs_dim = env.observation_space.shape[0]
     act_dim = env.action_space.n
@@ -128,4 +128,3 @@ def evaluate(model_path: str | None = None,
 if __name__ == "__main__":
     # ppo_agent = train(num_episodes=500, terminal_penalty=True)
     evaluate(model_path=MODEL_PATH, episodes=50, render=True, fps=60)
-

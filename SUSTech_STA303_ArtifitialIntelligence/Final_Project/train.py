@@ -45,7 +45,7 @@ AGENT_REGISTRY: Dict[str, AgentEntry] = {
     "ddqn": AgentEntry(DoubleDQNSolver, DoubleDQNConfig, "cartpole_double_dqn.torch"),
     "ppo": AgentEntry(PPOSolver, PPOConfig, "cartpole_ppo.torch"),
     "a2c": AgentEntry(A2CSolver, A2CConfig, "cartpole_a2c.torch"),
-    "sac": AgentEntry(SACSolver, SACConfig, "cartpole_sac.torch"),
+    "sac": AgentEntry(SACSolver, SACConfig, "cartpole_sac_2.torch"),
 }
 
 
@@ -78,7 +78,7 @@ def train(num_episodes: int = 200,
     os.makedirs(MODEL_DIR, exist_ok=True)
 
     env = gym.make(ENV_NAME)
-    logger = ScoreLogger(ENV_NAME)
+    logger = ScoreLogger(ENV_NAME, algorithm=algorithm)
     obs_dim = env.observation_space.shape[0]
     act_dim = env.action_space.n
 
@@ -209,4 +209,5 @@ if __name__ == "__main__":
             fps=args.eval_fps,
         )
         # 评估：python train.py -a ddqn -n 0 --eval-render --load-model models/cartpole_double_dqn.torch_2
-        # 训练：python train.py --algorithm sac --train-episodes 1000 --skip-eval --load-model models/cartpole_double_dqn.torch_2
+        #python train.py -a sac -n 0 --eval-render --load-model models/cartpole_sac.torch
+        # 训练：python train.py --algorithm sac --train-episodes 500 --skip-eval --load-model models/cartpole_double_dqn.torch_2

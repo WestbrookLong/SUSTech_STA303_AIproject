@@ -56,7 +56,7 @@ def train(algorithm: str = "dqn", num_episodes: int = 500, terminal_penalty: boo
     os.makedirs(MODEL_DIR, exist_ok=True)
 
     env = gym.make(ENV_NAME)
-    logger = ScoreLogger(ENV_NAME)
+    logger = ScoreLogger(ENV_NAME, algorithm=algorithm)
 
     obs_dim = env.observation_space.shape[0]
     act_dim = env.action_space.n

@@ -9,6 +9,7 @@ import os
 import csv
 from statistics import mean
 from collections import deque
+from datetime import datetime
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
@@ -16,10 +17,6 @@ import matplotlib.pyplot as plt
 
 # Constants
 SCORES_DIR = "./scores"
-SCORES_CSV_PATH = os.path.join(SCORES_DIR, "scores.csv")
-SCORES_PNG_PATH = os.path.join(SCORES_DIR, "scores.png")
-SOLVED_CSV_PATH = os.path.join(SCORES_DIR, "solved.csv")
-SOLVED_PNG_PATH = os.path.join(SCORES_DIR, "solved.png")
 
 AVERAGE_SCORE_TO_SOLVE = 475
 CONSECUTIVE_RUNS_TO_SOLVE = 100
@@ -28,23 +25,27 @@ CONSECUTIVE_RUNS_TO_SOLVE = 100
 class ScoreLogger:
     """Logs episode scores and generates plots."""
 
-    def __init__(self, env_name: str):
+    def __init__(self, env_name: str, algorithm: str | None = None):
         self.env_name = env_name
+        self.algorithm = algorithm or "default"
         self.scores = deque(maxlen=CONSECUTIVE_RUNS_TO_SOLVE)
 
         os.makedirs(SCORES_DIR, exist_ok=True)
 
-        # Clean old score files
-        for path in [SCORES_PNG_PATH, SCORES_CSV_PATH]:
-            if os.path.exists(path):
-                os.remove(path)
+        # Build per-run file names with timestamp and algorithm
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        prefix = f"{self.env_name}_{self.algorithm}_{timestamp}"
+        self.scores_csv_path = os.path.join(SCORES_DIR, f"{prefix}_scores.csv")
+        self.scores_png_path = os.path.join(SCORES_DIR, f"{prefix}_scores.png")
+        self.solved_csv_path = os.path.join(SCORES_DIR, f"{prefix}_solved.csv")
+        self.solved_png_path = os.path.join(SCORES_DIR, f"{prefix}_solved.png")
 
     def add_score(self, score: float, run: int):
         """Add a score for a given episode and update logs/plots."""
-        self._save_csv(SCORES_CSV_PATH, score)
+        self._save_csv(self.scores_csv_path, score)
         self._save_png(
-            input_path=SCORES_CSV_PATH,
-            output_path=SCORES_PNG_PATH,
+            input_path=self.scores_csv_path,
+            output_path=self.scores_png_path,
             x_label="Episodes",
             y_label="Scores",
             average_of_n_last=CONSECUTIVE_RUNS_TO_SOLVE,
@@ -60,10 +61,10 @@ class ScoreLogger:
         if mean_score >= AVERAGE_SCORE_TO_SOLVE and len(self.scores) >= CONSECUTIVE_RUNS_TO_SOLVE:
             solved_in = run - CONSECUTIVE_RUNS_TO_SOLVE
             print(f"Solved in {solved_in} runs, {run} total runs.")
-            self._save_csv(SOLVED_CSV_PATH, solved_in)
+            self._save_csv(self.solved_csv_path, solved_in)
             self._save_png(
-                input_path=SOLVED_CSV_PATH,
-                output_path=SOLVED_PNG_PATH,
+                input_path=self.solved_csv_path,
+                output_path=self.solved_png_path,
                 x_label="Trials",
                 y_label="Steps before solved",
                 average_of_n_last=None,
