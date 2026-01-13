@@ -1,0 +1,110 @@
+[
+  {
+    "ckpt": "runs/section5/bc/cartpole_d_mixed/bc_policy.pt",
+    "env_id": "CartPole-v1",
+    "in_dist": {
+      "avg_return": 324.7,
+      "success_rate": 0.0
+    },
+    "ood": {
+      "avg_return": 226.55,
+      "success_rate": 0.0
+    },
+    "algorithm": "bc",
+    "theta_range": [
+      -0.25,
+      0.25
+    ],
+    "timestamp": "2026-01-13T08:44:28.374558"
+  },
+  {
+    "ckpt": "runs/section5/awbc/cartpole_d_mixed/awbc_policy.pt",
+    "env_id": "CartPole-v1",
+    "in_dist": {
+      "avg_return": 499.0,
+      "success_rate": 0.7
+    },
+    "ood": {
+      "avg_return": 297.0,
+      "success_rate": 0.4
+    },
+    "algorithm": "awbc",
+    "theta_range": [
+      -0.25,
+      0.25
+    ],
+    "timestamp": "2026-01-13T08:44:39.246281"
+  },
+  {
+    "ckpt": "runs/section5/cql/cartpole_d_mixed/cql_policy.pt",
+    "env_id": "CartPole-v1",
+    "in_dist": {
+      "avg_return": 493.65,
+      "success_rate": 0.95
+    },
+    "ood": {
+      "avg_return": 300.6,
+      "success_rate": 0.45
+    },
+    "algorithm": "cql",
+    "theta_range": [
+      -0.25,
+      0.25
+    ],
+    "timestamp": "2026-01-13T08:44:50.091525"
+  },
+  {
+    "ckpt": "runs/section5/bc/cartpole_d_mixed/bc_policy.pt",
+    "env_id": "CartPole-v1",
+    "in_dist": {
+      "avg_return": 324.7,
+      "success_rate": 0.0
+    },
+    "ood": {
+      "avg_return": 176.05,
+      "success_rate": 0.0
+    },
+    "algorithm": "bc",
+    "theta_range": [
+      -0.4,
+      0.4
+    ],
+    "timestamp": "2026-01-13T08:49:37.647151"
+  },
+  {
+    "ckpt": "runs/section5/awbc/cartpole_d_mixed/awbc_policy.pt",
+    "env_id": "CartPole-v1",
+    "in_dist": {
+      "avg_return": 499.0,
+      "success_rate": 0.7
+    },
+    "ood": {
+      "avg_return": 160.3,
+      "success_rate": 0.25
+    },
+    "algorithm": "awbc",
+    "theta_range": [
+      -0.4,
+      0.4
+    ],
+    "timestamp": "2026-01-13T08:49:48.169907"
+  },
+  {
+    "ckpt": "runs/section5/cql/cartpole_d_mixed/cql_policy.pt",
+    "env_id": "CartPole-v1",
+    "in_dist": {
+      "avg_return": 493.65,
+      "success_rate": 0.95
+    },
+    "ood": {
+      "avg_return": 181.05,
+      "success_rate": 0.25
+    },
+    "algorithm": "cql",
+    "theta_range": [
+      -0.4,
+      0.4
+    ],
+    "timestamp": "2026-01-13T08:49:58.256553"
+  }
+]

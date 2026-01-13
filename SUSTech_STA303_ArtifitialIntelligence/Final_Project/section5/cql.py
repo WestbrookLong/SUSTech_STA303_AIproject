@@ -32,7 +32,7 @@ class CQLConfig:
     hidden_dim: int = 128
     gamma: float = 0.99
     alpha_cql: float = 1.0  # weight for conservative penalty
-    temperature: float = 1.0
+    temperature: float = 0.8
     num_random_actions: int = 10
     entropy_alpha: float = 0.2
     target_update_interval: int = 1

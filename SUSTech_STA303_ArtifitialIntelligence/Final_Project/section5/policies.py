@@ -49,7 +49,8 @@ class DiscreteActor(nn.Module):
         return action, log_prob
 
     def act(self, obs_np, deterministic: bool = True) -> int:
-        obs_t = torch.as_tensor(obs_np, dtype=torch.float32).unsqueeze(0)
+        device = next(self.parameters()).device
+        obs_t = torch.as_tensor(obs_np, dtype=torch.float32, device=device).unsqueeze(0)
         with torch.no_grad():
             action, _ = self.sample(obs_t, deterministic=deterministic)
         return int(action.item())
@@ -90,7 +91,7 @@ class GaussianActor(nn.Module):
         return scaled_action, log_prob
 
     def act(self, obs_np, deterministic: bool = True):
-        obs_t = torch.as_tensor(obs_np, dtype=torch.float32).unsqueeze(0)
+        obs_t = torch.as_tensor(obs_np, dtype=torch.float32, device=self.action_low.device).unsqueeze(0)
         with torch.no_grad():
             action, _ = self.sample(obs_t, deterministic=deterministic)
         return action.squeeze(0).cpu().numpy()

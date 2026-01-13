@@ -1,24 +1,24 @@
 {
   "algorithm": "bc",
   "env_id": "CartPole-v1",
-  "dataset_path": "datasets/section5/cartpole_d_expert.pt",
+  "dataset_path": "datasets/section5/cartpole_d_mixed_s0.pt",
   "batch_size": 256,
   "epochs": 50,
   "lr": 0.0003,
   "hidden_dim": 128,
   "eval_interval": 5,
   "eval_episodes": 10,
-  "seed": 42,
+  "seed": 0,
   "log_dir": "runs/section5\\bc",
   "device": "cpu",
   "dataset_metadata": {
     "env_id": "CartPole-v1",
-    "seed": 123,
+    "seed": 0,
     "gamma": 0.99,
-    "prand": 0.0,
+    "prand": 0.87,
     "steps": 50000,
-    "policy_ckpt_path": "D:\\Users\\WESTBROOK\\PycharmProjects\\AI_lab_project\\AIproject\\SUSTech_STA303_ArtifitialIntelligence\\Final_Project\\models\\cartpole_sac_2.torch",
-    "timestamp": "2026-01-12T12:50:24.525871",
+    "policy_ckpt_path": "D:\\SUSTech\\\u4eba\u5de5\u667a\u80fdB\\project\\SUSTech_STA303_AIproject\\SUSTech_STA303_ArtifitialIntelligence\\Final_Project\\models\\cartpole_sac_2.torch",
+    "timestamp": "2026-01-13T07:02:33.040086",
     "action_space": "discrete"
   }
 }

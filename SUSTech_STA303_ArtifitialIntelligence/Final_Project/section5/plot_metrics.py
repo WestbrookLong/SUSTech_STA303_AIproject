@@ -2,9 +2,9 @@
 Plot learning curves directly from Section 5 `metrics.csv`.
 
 Usage examples:
-  python -m section5.plot_metrics --csv runs/section5/bc/cartpole_d_expert/metrics.csv --out runs/section5/figures/bc_expert.png
-  python -m section5.plot_metrics --csv runs/section5/bc/cartpole_d_expert/metrics.csv --csv runs/section5/cql/cartpole_d_expert/metrics.csv --metric eval_return --out runs/section5/figures/compare.png
-  python -m section5.plot_metrics --csv runs/section5/cql/cartpole_d_expert/metrics.csv --out runs/section5/figures/cql_join.png --metric eval_return --join
+  python -m section5.plot_metrics --csv runs/section5/bc/cartpole_d_expert_old/metrics.csv --out runs/section5/figures/bc_expert.png
+  python -m section5.plot_metrics --csv runs/section5/bc/cartpole_d_expert_old/metrics.csv --csv runs/section5/cql/cartpole_d_expert_old/metrics.csv --metric eval_return --out runs/section5/figures/compare.png
+  python -m section5.plot_metrics --csv runs/section5/cql/cartpole_d_expert_old/metrics.csv --out runs/section5/figures/cql_join.png --metric eval_return --join
 """
 
 from __future__ import annotations

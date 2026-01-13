@@ -110,7 +110,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Collect offline dataset from a trained SAC policy.")
     parser.add_argument("--env_id", default="CartPole-v1", help="Gymnasium environment id.")
     parser.add_argument("--ckpt", default=os.path.join("models", "cartpole_sac_2.torch"), help="Path to expert checkpoint.")
-    parser.add_argument("--out", default=os.path.join(DATA_DIR, "cartpole_d_expert.pt"), help="Output dataset path (.pt).")
+    parser.add_argument("--out", default=os.path.join(DATA_DIR, "cartpole_d_expert_old.pt"), help="Output dataset path (.pt).")
     parser.add_argument("--steps", type=int, default=50_000, help="Number of transitions to collect.")
     parser.add_argument("--prand", type=float, default=0.0, help="Random action probability (0=expert, 0.5=mixed).")
     parser.add_argument("--seed", type=int, default=123, help="Random seed for env and sampling.")
